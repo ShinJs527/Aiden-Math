@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aiden的数学练习</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 600px;
+    width: 95%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  h1 {
+    text-align: center;
+    color: #4a4a8a;
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  /* 顶部信息栏 */
+  .info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f0f0ff;
+    border-radius: 16px;
+    padding: 12px 20px;
+    margin-bottom: 24px;
+  }
+
+  .info-item {
+    text-align: center;
+  }
+
+  .info-label {
+    font-size: 12px;
+    color: #888;
+  }
+
+  .info-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #4a4a8a;
+  }
+
+  .timer { color: #e74c3c !important; }
+  .timer.warning { animation: blink 1s infinite; }
+
+  @keyframes blink {
+    50% { opacity: 0.5; }
+  }
+
+  /* 进度条 */
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+
+  /* 题目区域 */
+  .question-area {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .question-number {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+
+  .question-text {
+    font-size: 42px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 选项按钮 */
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .option-btn {
+    padding: 16px;
+    font-size: 24px;
+    font-weight: bold;
+    border: 3px solid #ddd;
+    border-radius: 16px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #333;
+  }
+
+  .option-btn:hover {
+    border-color: #667eea;
+    background: #f0f0ff;
+    transform: scale(1.03);
+  }
+
+  .option-btn:active {
+    transform: scale(0.97);
+  }
+
+  .option-btn.correct {
+    border-color: #2ecc71;
+    background: #d4efdf;
+    color: #27ae60;
+  }
+
+  .option-btn.wrong {
+    border-color: #e74c3c;
+    background: #fadbd8;
+    color: #c0392b;
+  }
+
+  .option-btn.show-correct {
+    border-color: #2ecc71;
+    background: #d4efdf;
+    color: #27ae60;
+  }
+
+  .option-btn.disabled {
+    pointer-events: none;
+  }
+
+  /* 开始页面 */
+  .start-screen {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .start-screen p {
+    color: #666;
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .start-btn, .restart-btn {
+    padding: 16px 48px;
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+
+  .start-btn:hover, .restart-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+  }
+
+  /* 结果页面 */
+  .result-screen {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .score-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+  }
+
+  .score-circle.excellent { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+  .score-circle.good { background: linear-gradient(135deg, #3498db, #2980b9); }
+  .score-circle.ok { background: linear-gradient(135deg, #f39c12, #e67e22); }
+  .score-circle.poor { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+  .score-label {
+    font-size: 14px;
+    font-weight: normal;
+  }
+
+  .result-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .result-detail {
+    background: #f8f8ff;
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .result-detail .label { font-size: 12px; color: #888; }
+  .result-detail .value { font-size: 22px; font-weight: bold; color: #4a4a8a; }
+
+  .result-message {
+    font-size: 20px;
+    margin: 16px 0;
+    color: #4a4a8a;
+  }
+
+  .emoji-big {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+
+  .hidden { display: none !important; }
+
+  /* 答题结果表格 */
+  .result-table-wrap {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 16px 0;
+    border-radius: 12px;
+    border: 1px solid #eee;
+  }
+
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .result-table th {
+    background: #f0f0ff;
+    padding: 10px 6px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    color: #4a4a8a;
+    font-size: 13px;
+  }
+
+  .result-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .result-table tr.row-correct { background: #f0fff0; }
+  .result-table tr.row-wrong { background: #fff5f5; }
+  .result-table tr.row-skip { background: #fffdf0; }
+
+  .badge-correct {
+    display: inline-block;
+    background: #2ecc71;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .badge-wrong {
+    display: inline-block;
+    background: #e74c3c;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .badge-skip {
+    display: inline-block;
+    background: #f39c12;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .redo-btn {
+    padding: 14px 36px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .redo-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(231, 76, 60, 0.4);
+  }
+
+  /* 题目类型选择 */
+  .type-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0;
+  }
+
+  .type-btn {
+    padding: 8px 16px;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+
+  .type-btn.active {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+  }
+
+  .type-btn:hover {
+    border-color: #667eea;
+  }
+
+  /* 反馈动画 */
+  .feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 80px;
+    z-index: 100;
+    pointer-events: none;
+    animation: feedbackAnim 0.6s ease-out forwards;
+  }
+
+  @keyframes feedbackAnim {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🧮 Aiden的数学练习</h1>
+  <div class="subtitle">每天练习，越来越棒！</div>
+
+  <!-- 开始页面 -->
+  <div id="startScreen" class="start-screen">
+    <p>
+      📝 共 <strong>100</strong> 道题<br>
+      ⏱️ 限时 <strong>10</strong> 分钟<br>
+      🎯 每题4个选项，选出正确答案
+    </p>
+    <p style="font-size:14px; color:#999;">选择题目类型：</p>
+    <div class="type-selector">
+      <button class="type-btn active" data-type="add" onclick="toggleType(this)">➕ 加法</button>
+      <button class="type-btn active" data-type="sub" onclick="toggleType(this)">➖ 减法</button>
+      <button class="type-btn active" data-type="mul" onclick="toggleType(this)">✖️ 乘法</button>
+      <button class="type-btn active" data-type="div" onclick="toggleType(this)">➗ 除法</button>
+      <button class="type-btn" data-type="mix" onclick="toggleMix(this)">🔀 Mix</button>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">开始答题！</button>
+  </div>
+
+  <!-- 答题页面 -->
+  <div id="quizScreen" class="hidden">
+    <div class="info-bar">
+      <div class="info-item">
+        <div class="info-label">题目</div>
+        <div class="info-value"><span id="currentQ">1</span>/<span id="totalQ">100</span></div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">剩余时间</div>
+        <div class="info-value timer" id="timerDisplay">10:00</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">正确</div>
+        <div class="info-value" id="correctCount" style="color:#2ecc71">0</div>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+
+    <div class="question-area">
+      <div class="question-number" id="questionNumber">第 1 题</div>
+      <div class="question-text" id="questionText">12 + 34 = ?</div>
+    </div>
+
+    <div class="options" id="optionsArea">
+      <button class="option-btn" onclick="selectAnswer(0)">46</button>
+      <button class="option-btn" onclick="selectAnswer(1)">48</button>
+      <button class="option-btn" onclick="selectAnswer(2)">44</button>
+      <button class="option-btn" onclick="selectAnswer(3)">50</button>
+    </div>
+  </div>
+
+  <!-- 结果页面 -->
+  <div id="resultScreen" class="hidden result-screen">
+  </div>
+</div>
+
+<script>
+  // 状态
+  let questions = [];
+  let currentIndex = 0;
+  let correctTotal = 0;
+  let timeLeft = 600; // 10分钟 = 600秒
+  let timerInterval = null;
+  let selectedTypes = ['add', 'sub', 'mul', 'div'];
+  let quizActive = false;
+  let answers = []; // 记录每题作答情况: { isCorrect, userAnswer }
+  let isRedoMode = false;
+  let totalQuestions = 100;
+
+  // 题目类型选择
+  function toggleType(btn) {
+    // 如果点了单项，取消Mix的选中
+    const mixBtn = document.querySelector('.type-btn[data-type="mix"]');
+    if (mixBtn.classList.contains('active')) {
+      mixBtn.classList.remove('active');
+    }
+    btn.classList.toggle('active');
+    selectedTypes = [];
+    document.querySelectorAll('.type-btn.active').forEach(b => {
+      selectedTypes.push(b.dataset.type);
+    });
+  }
+
+  // Mix按钮：选中时自动选中全部四种，取消时全部取消
+  function toggleMix(btn) {
+    const allBtns = document.querySelectorAll('.type-btn[data-type="add"], .type-btn[data-type="sub"], .type-btn[data-type="mul"], .type-btn[data-type="div"]');
+    const isActive = btn.classList.contains('active');
+    if (isActive) {
+      // 取消Mix和所有单项
+      btn.classList.remove('active');
+      allBtns.forEach(b => b.classList.remove('active'));
+    } else {
+      // 选中Mix和所有单项
+      btn.classList.add('active');
+      allBtns.forEach(b => b.classList.add('active'));
+    }
+    selectedTypes = [];
+    document.querySelectorAll('.type-btn.active').forEach(b => {
+      selectedTypes.push(b.dataset.type);
+    });
+  }
+
+  // 生成随机整数 [min, max]
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  // 生成一道题
+  function generateQuestion() {
+    const type = selectedTypes[randInt(0, selectedTypes.length - 1)];
+    let a, b, answer, text;
+
+    switch(type) {
+      case 'add':
+        a = randInt(10, 90);
+        b = randInt(1, 100 - a); // 确保 a + b <= 100
+        answer = a + b;
+        text = `${a} + ${b} = ?`;
+        break;
+      case 'sub':
+        a = randInt(10, 99);
+        b = randInt(1, a); // 确保不出负数，且 a <= 99 < 100
+        answer = a - b;
+        text = `${a} − ${b} = ?`;
+        break;
+      case 'mul':
+        a = randInt(1, 9);
+        b = randInt(1, 9);
+        answer = a * b;
+        text = `${a} × ${b} = ?`;
+        break;
+      case 'div':
+        b = randInt(1, 9);
+        answer = randInt(1, 9);
+        a = b * answer; // 确保整除
+        text = `${a} ÷ ${b} = ?`;
+        break;
+      case 'mix': {
+        // 混合运算：两步运算，按运算顺序（先乘除后加减）
+        const patterns = [
+          // a + b × c (结果 <= 100)
+          () => {
+            const b2 = randInt(2, 9), c = randInt(2, 9);
+            const product = b2 * c;
+            const maxA = Math.max(1, 100 - product);
+            const a2 = randInt(1, maxA);
+            return { text: `${a2} + ${b2} × ${c} = ?`, answer: a2 + product };
+          },
+          // a - b × c (确保不为负，a <= 100)
+          () => {
+            const b2 = randInt(2, 9), c = randInt(2, 9);
+            const product = b2 * c;
+            const a2 = randInt(product, Math.min(100, product + 50));
+            return { text: `${a2} − ${b2} × ${c} = ?`, answer: a2 - product };
+          },
+          // a × b + c (结果 <= 100)
+          () => {
+            const a2 = randInt(2, 9), b2 = randInt(2, 9);
+            const product = a2 * b2;
+            const maxC = Math.max(1, 100 - product);
+            const c = randInt(1, maxC);
+            return { text: `${a2} × ${b2} + ${c} = ?`, answer: product + c };
+          },
+          // a × b - c (确保不为负)
+          () => {
+            const a2 = randInt(2, 9), b2 = randInt(2, 9);
+            const product = a2 * b2;
+            const c = randInt(1, product);
+            return { text: `${a2} × ${b2} − ${c} = ?`, answer: product - c };
+          },
+          // a ÷ b + c (结果 <= 100)
+          () => {
+            const b2 = randInt(2, 9), quotient = randInt(1, 9);
+            const a2 = b2 * quotient;
+            const maxC = Math.max(1, 100 - quotient);
+            const c = randInt(1, maxC);
+            return { text: `${a2} ÷ ${b2} + ${c} = ?`, answer: quotient + c };
+          },
+          // a + b ÷ c (结果 <= 100)
+          () => {
+            const c = randInt(2, 9), quotient = randInt(1, 9);
+            const b2 = c * quotient;
+            const maxA = Math.max(1, 100 - quotient);
+            const a2 = randInt(1, maxA);
+            return { text: `${a2} + ${b2} ÷ ${c} = ?`, answer: a2 + quotient };
+          }
+        ];
+        const gen = patterns[randInt(0, patterns.length - 1)]();
+        answer = gen.answer;
+        text = gen.text;
+        break;
+      }
+    }
+
+    // 生成4个选项（含正确答案）
+    let options = new Set();
+    options.add(answer);
+
+    while (options.size < 4) {
+      let fake;
+      const offset = randInt(1, 10) * (Math.random() > 0.5 ? 1 : -1);
+      fake = answer + offset;
+      if (fake >= 0 && fake !== answer) {
+        options.add(fake);
+      }
+    }
+
+    // 转为数组并打乱
+    let optArr = Array.from(options);
+    for (let i = optArr.length - 1; i > 0; i--) {
+      const j = randInt(0, i);
+      [optArr[i], optArr[j]] = [optArr[j], optArr[i]];
+    }
+
+    const correctIdx = optArr.indexOf(answer);
+
+    return { text, answer, options: optArr, correctIdx };
+  }
+
+  // 生成所有题目
+  function generateAllQuestions() {
+    questions = [];
+    for (let i = 0; i < 100; i++) {
+      questions.push(generateQuestion());
+    }
+  }
+
+  // 显示当前题目
+  function showQuestion() {
+    const q = questions[currentIndex];
+    document.getElementById('currentQ').textContent = currentIndex + 1;
+    document.getElementById('totalQ').textContent = totalQuestions;
+    document.getElementById('questionNumber').textContent = `第 ${currentIndex + 1} / ${totalQuestions} 题`;
+    document.getElementById('questionText').textContent = q.text;
+    document.getElementById('progressFill').style.width = `${(currentIndex / totalQuestions) * 100}%`;
+
+    const btns = document.querySelectorAll('.option-btn');
+    btns.forEach((btn, i) => {
+      btn.textContent = q.options[i];
+      btn.className = 'option-btn';
+    });
+  }
+
+  // 选择答案
+  function selectAnswer(idx) {
+    if (!quizActive) return;
+
+    const q = questions[currentIndex];
+    const btns = document.querySelectorAll('.option-btn');
+
+    // 禁用所有按钮
+    btns.forEach(b => b.classList.add('disabled'));
+
+    const isCorrect = (idx === q.correctIdx);
+    answers[currentIndex] = {
+      isCorrect,
+      userAnswer: q.options[idx]
+    };
+
+    if (isCorrect) {
+      btns[idx].classList.add('correct');
+      correctTotal++;
+      document.getElementById('correctCount').textContent = correctTotal;
+      showFeedback('✅');
+    } else {
+      btns[idx].classList.add('wrong');
+      btns[q.correctIdx].classList.add('show-correct');
+      showFeedback('❌');
+    }
+
+    // 延迟后进入下一题
+    setTimeout(() => {
+      currentIndex++;
+      if (currentIndex >= totalQuestions) {
+        endQuiz();
+      } else {
+        showQuestion();
+      }
+    }, 500);
+  }
+
+  // 反馈动画
+  function showFeedback(emoji) {
+    const el = document.createElement('div');
+    el.className = 'feedback';
+    el.textContent = emoji;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 700);
+  }
+
+  // 计时器
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      const min = Math.floor(timeLeft / 60);
+      const sec = timeLeft % 60;
+      const display = document.getElementById('timerDisplay');
+      display.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
+
+      if (timeLeft <= 60) {
+        display.classList.add('warning');
+      }
+
+      if (timeLeft <= 0) {
+        endQuiz();
+      }
+    }, 1000);
+  }
+
+  // 开始测验
+  function startQuiz() {
+    if (selectedTypes.length === 0) {
+      alert('请至少选择一种题目类型！');
+      return;
+    }
+
+    currentIndex = 0;
+    correctTotal = 0;
+    timeLeft = 600;
+    quizActive = true;
+    isRedoMode = false;
+    totalQuestions = 100;
+    answers = [];
+
+    generateAllQuestions();
+
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('resultScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('currentQ').textContent = '1';
+    document.getElementById('totalQ').textContent = totalQuestions;
+    document.getElementById('correctCount').textContent = '0';
+    document.getElementById('timerDisplay').textContent = '10:00';
+    document.getElementById('timerDisplay').classList.remove('warning');
+
+    showQuestion();
+    startTimer();
+  }
+
+  // 重做错题
+  function redoWrongQuestions() {
+    const wrongQuestions = [];
+    for (let i = 0; i < questions.length; i++) {
+      if (!answers[i] || !answers[i].isCorrect) {
+        // 重新生成选项，但保留题目
+        const q = questions[i];
+        let options = new Set();
+        options.add(q.answer);
+        while (options.size < 4) {
+          const offset = randInt(1, 10) * (Math.random() > 0.5 ? 1 : -1);
+          const fake = q.answer + offset;
+          if (fake >= 0 && fake !== q.answer) options.add(fake);
+        }
+        let optArr = Array.from(options);
+        for (let j = optArr.length - 1; j > 0; j--) {
+          const k = randInt(0, j);
+          [optArr[j], optArr[k]] = [optArr[k], optArr[j]];
+        }
+        wrongQuestions.push({
+          text: q.text,
+          answer: q.answer,
+          options: optArr,
+          correctIdx: optArr.indexOf(q.answer)
+        });
+      }
+    }
+
+    questions = wrongQuestions;
+    totalQuestions = questions.length;
+    currentIndex = 0;
+    correctTotal = 0;
+    timeLeft = 600;
+    quizActive = true;
+    isRedoMode = true;
+    answers = [];
+
+    document.getElementById('resultScreen').classList.add('hidden');
+    document.getElementById('quizScreen').classList.remove('hidden');
+    document.getElementById('currentQ').textContent = '1';
+    document.getElementById('totalQ').textContent = totalQuestions;
+    document.getElementById('correctCount').textContent = '0';
+    document.getElementById('timerDisplay').textContent = '10:00';
+    document.getElementById('timerDisplay').classList.remove('warning');
+
+    showQuestion();
+    startTimer();
+  }
+
+  // 结束测验
+  function endQuiz() {
+    quizActive = false;
+    clearInterval(timerInterval);
+
+    const answered = currentIndex;
+    const score = answered > 0 ? Math.round((correctTotal / answered) * 100) : 0;
+    const timeTaken = 600 - timeLeft;
+    const min = Math.floor(timeTaken / 60);
+    const sec = timeTaken % 60;
+
+    // 统计错题数
+    let wrongCount = 0;
+    let skipCount = 0;
+    for (let i = 0; i < totalQuestions; i++) {
+      if (!answers[i]) skipCount++;
+      else if (!answers[i].isCorrect) wrongCount++;
+    }
+
+    let grade, emoji, message, circleClass;
+    if (score >= 95) {
+      grade = '太棒了！'; emoji = '🏆'; message = '你是数学小天才！继续保持！'; circleClass = 'excellent';
+    } else if (score >= 80) {
+      grade = '很不错！'; emoji = '⭐'; message = '表现很好，再接再厉！'; circleClass = 'good';
+    } else if (score >= 60) {
+      grade = '还可以！'; emoji = '💪'; message = '继续加油，你会越来越好的！'; circleClass = 'ok';
+    } else {
+      grade = '要努力哦'; emoji = '📚'; message = '多多练习，下次一定更好！'; circleClass = 'poor';
+    }
+
+    // 生成表格行
+    let tableRows = '';
+    for (let i = 0; i < totalQuestions; i++) {
+      const q = questions[i];
+      const questionText = q.text.replace(' = ?', '');
+      if (!answers[i]) {
+        // 未答（时间到）
+        tableRows += `<tr class="row-skip">
+          <td>${i + 1}</td>
+          <td>${questionText}</td>
+          <td>—</td>
+          <td>${q.answer}</td>
+          <td><span class="badge-skip">未答</span></td>
+        </tr>`;
+      } else if (answers[i].isCorrect) {
+        tableRows += `<tr class="row-correct">
+          <td>${i + 1}</td>
+          <td>${questionText}</td>
+          <td>${answers[i].userAnswer}</td>
+          <td>${q.answer}</td>
+          <td><span class="badge-correct">正确</span></td>
+        </tr>`;
+      } else {
+        tableRows += `<tr class="row-wrong">
+          <td>${i + 1}</td>
+          <td>${questionText}</td>
+          <td style="color:#e74c3c;font-weight:bold">${answers[i].userAnswer}</td>
+          <td style="color:#27ae60;font-weight:bold">${q.answer}</td>
+          <td><span class="badge-wrong">错误</span></td>
+        </tr>`;
+      }
+    }
+
+    const hasWrong = (wrongCount + skipCount) > 0;
+    const redoLabel = isRedoMode ? '继续重做错题' : '重做错题';
+
+    document.getElementById('quizScreen').classList.add('hidden');
+    const resultDiv = document.getElementById('resultScreen');
+    resultDiv.classList.remove('hidden');
+
+    resultDiv.innerHTML = `
+      <div class="emoji-big">${emoji}</div>
+      <div class="score-circle ${circleClass}">
+        ${score}<span style="font-size:20px">分</span>
+        <div class="score-label">正确率</div>
+      </div>
+      <div class="result-message">${grade} ${message}</div>
+      <div class="result-details">
+        <div class="result-detail">
+          <div class="label">已答题数</div>
+          <div class="value">${answered}</div>
+        </div>
+        <div class="result-detail">
+          <div class="label">答对</div>
+          <div class="value" style="color:#2ecc71">${correctTotal}</div>
+        </div>
+        <div class="result-detail">
+          <div class="label">用时</div>
+          <div class="value">${min}分${sec}秒</div>
+        </div>
+      </div>
+
+      <div class="result-table-wrap">
+        <table class="result-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>题目</th>
+              <th>你的答案</th>
+              <th>正确答案</th>
+              <th>结果</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+
+      ${hasWrong ? `<button class="redo-btn" onclick="redoWrongQuestions()">📝 ${redoLabel}（${wrongCount + skipCount}题）</button><br>` : '<p style="color:#2ecc71;font-weight:bold;margin:12px 0">全部正确！太厉害了！</p>'}
+      <button class="restart-btn" onclick="startQuiz()" style="margin-top:12px">重新开始100题</button>
+      <br>
+      <button class="restart-btn" onclick="goHome()" style="background: linear-gradient(135deg, #aaa, #888); font-size: 16px; padding: 12px 32px; margin-top:8px">返回首页</button>
+    `;
+  }
+
+  function goHome() {
+    document.getElementById('resultScreen').classList.add('hidden');
+    document.getElementById('startScreen').classList.remove('hidden');
+  }
+</script>
+
+</body>
+</html>

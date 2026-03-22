@@ -140,7 +140,7 @@
   <!-- Start Screen -->
   <div id="startScreen" class="start-screen">
     <p>
-      &#128221; <strong>100</strong> questions<br>
+      &#128221; <strong>100</strong> questions (<strong>20</strong> for Word Problems)<br>
       &#9201;&#65039; <strong>10</strong> minutes<br>
       &#127919; Pick the correct answer from 4 choices
     </p>
@@ -337,7 +337,7 @@
 
   function generateAllQuestions() {
     questions = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < totalQuestions; i++) {
       questions.push(generateQuestion());
     }
   }
@@ -420,7 +420,9 @@
     timeLeft = 600;
     quizActive = true;
     isRedoMode = false;
-    totalQuestions = 100;
+    // Word problems only → 20 questions; otherwise 100
+    const wordOnly = selectedTypes.length === 1 && selectedTypes[0] === 'word';
+    totalQuestions = wordOnly ? 20 : 100;
     answers = [];
 
     generateAllQuestions();

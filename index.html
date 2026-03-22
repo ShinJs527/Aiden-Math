@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aiden的数学练习</title>
+<title>Aiden's Math Practice</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     display: flex;
@@ -20,362 +20,110 @@
     background: white;
     border-radius: 24px;
     padding: 32px;
-    max-width: 600px;
+    max-width: 640px;
     width: 95%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     position: relative;
   }
 
-  h1 {
-    text-align: center;
-    color: #4a4a8a;
-    font-size: 28px;
-    margin-bottom: 8px;
-  }
+  h1 { text-align: center; color: #4a4a8a; font-size: 28px; margin-bottom: 8px; }
+  .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 24px; }
 
-  .subtitle {
-    text-align: center;
-    color: #888;
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-
-  /* 顶部信息栏 */
   .info-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f0f0ff;
-    border-radius: 16px;
-    padding: 12px 20px;
-    margin-bottom: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: #f0f0ff; border-radius: 16px; padding: 12px 20px; margin-bottom: 24px;
   }
-
-  .info-item {
-    text-align: center;
-  }
-
-  .info-label {
-    font-size: 12px;
-    color: #888;
-  }
-
-  .info-value {
-    font-size: 22px;
-    font-weight: bold;
-    color: #4a4a8a;
-  }
-
+  .info-item { text-align: center; }
+  .info-label { font-size: 12px; color: #888; }
+  .info-value { font-size: 22px; font-weight: bold; color: #4a4a8a; }
   .timer { color: #e74c3c !important; }
   .timer.warning { animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.5; } }
 
-  @keyframes blink {
-    50% { opacity: 0.5; }
-  }
+  .progress-bar { width: 100%; height: 8px; background: #eee; border-radius: 4px; margin-bottom: 24px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 4px; transition: width 0.3s; }
 
-  /* 进度条 */
-  .progress-bar {
-    width: 100%;
-    height: 8px;
-    background: #eee;
-    border-radius: 4px;
-    margin-bottom: 24px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    border-radius: 4px;
-    transition: width 0.3s;
-  }
-
-  /* 题目区域 */
-  .question-area {
-    text-align: center;
-    margin-bottom: 24px;
-  }
-
-  .question-number {
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 8px;
-  }
-
+  .question-area { text-align: center; margin-bottom: 24px; }
+  .question-number { font-size: 14px; color: #aaa; margin-bottom: 8px; }
   .question-text {
-    font-size: 42px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 8px;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 36px; font-weight: bold; color: #333; margin-bottom: 8px;
+    min-height: 60px; display: flex; align-items: center; justify-content: center;
+    line-height: 1.3; padding: 0 8px;
   }
+  .question-text.word-problem { font-size: 20px; font-weight: normal; min-height: 80px; }
 
-  /* 选项按钮 */
-  .options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .option-btn {
-    padding: 16px;
-    font-size: 24px;
-    font-weight: bold;
-    border: 3px solid #ddd;
-    border-radius: 16px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #333;
+    padding: 16px; font-size: 24px; font-weight: bold; border: 3px solid #ddd;
+    border-radius: 16px; background: white; cursor: pointer; transition: all 0.2s; color: #333;
   }
+  .option-btn:hover { border-color: #667eea; background: #f0f0ff; transform: scale(1.03); }
+  .option-btn:active { transform: scale(0.97); }
+  .option-btn.correct { border-color: #2ecc71; background: #d4efdf; color: #27ae60; }
+  .option-btn.wrong { border-color: #e74c3c; background: #fadbd8; color: #c0392b; }
+  .option-btn.show-correct { border-color: #2ecc71; background: #d4efdf; color: #27ae60; }
+  .option-btn.disabled { pointer-events: none; }
 
-  .option-btn:hover {
-    border-color: #667eea;
-    background: #f0f0ff;
-    transform: scale(1.03);
-  }
-
-  .option-btn:active {
-    transform: scale(0.97);
-  }
-
-  .option-btn.correct {
-    border-color: #2ecc71;
-    background: #d4efdf;
-    color: #27ae60;
-  }
-
-  .option-btn.wrong {
-    border-color: #e74c3c;
-    background: #fadbd8;
-    color: #c0392b;
-  }
-
-  .option-btn.show-correct {
-    border-color: #2ecc71;
-    background: #d4efdf;
-    color: #27ae60;
-  }
-
-  .option-btn.disabled {
-    pointer-events: none;
-  }
-
-  /* 开始页面 */
-  .start-screen {
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .start-screen p {
-    color: #666;
-    margin-bottom: 16px;
-    font-size: 16px;
-    line-height: 1.8;
-  }
+  .start-screen { text-align: center; padding: 20px 0; }
+  .start-screen p { color: #666; margin-bottom: 16px; font-size: 16px; line-height: 1.8; }
 
   .start-btn, .restart-btn {
-    padding: 16px 48px;
-    font-size: 22px;
-    font-weight: bold;
-    color: white;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 12px;
+    padding: 16px 48px; font-size: 22px; font-weight: bold; color: white;
+    background: linear-gradient(135deg, #667eea, #764ba2); border: none;
+    border-radius: 16px; cursor: pointer; transition: all 0.2s; margin-top: 12px;
   }
+  .start-btn:hover, .restart-btn:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(102,126,234,0.4); }
 
-  .start-btn:hover, .restart-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-  }
-
-  /* 结果页面 */
-  .result-screen {
-    text-align: center;
-    padding: 20px 0;
-  }
-
+  .result-screen { text-align: center; padding: 20px 0; }
   .score-circle {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    margin: 0 auto 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    font-weight: bold;
-    color: white;
+    width: 160px; height: 160px; border-radius: 50%; margin: 0 auto 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 48px; font-weight: bold; color: white;
   }
-
   .score-circle.excellent { background: linear-gradient(135deg, #2ecc71, #27ae60); }
   .score-circle.good { background: linear-gradient(135deg, #3498db, #2980b9); }
   .score-circle.ok { background: linear-gradient(135deg, #f39c12, #e67e22); }
   .score-circle.poor { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+  .score-label { font-size: 14px; font-weight: normal; }
 
-  .score-label {
-    font-size: 14px;
-    font-weight: normal;
-  }
-
-  .result-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-    margin: 20px 0;
-  }
-
-  .result-detail {
-    background: #f8f8ff;
-    border-radius: 12px;
-    padding: 12px;
-  }
-
+  .result-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; }
+  .result-detail { background: #f8f8ff; border-radius: 12px; padding: 12px; }
   .result-detail .label { font-size: 12px; color: #888; }
   .result-detail .value { font-size: 22px; font-weight: bold; color: #4a4a8a; }
-
-  .result-message {
-    font-size: 20px;
-    margin: 16px 0;
-    color: #4a4a8a;
-  }
-
-  .emoji-big {
-    font-size: 48px;
-    margin-bottom: 8px;
-  }
-
+  .result-message { font-size: 20px; margin: 16px 0; color: #4a4a8a; }
+  .emoji-big { font-size: 48px; margin-bottom: 8px; }
   .hidden { display: none !important; }
 
-  /* 答题结果表格 */
-  .result-table-wrap {
-    max-height: 400px;
-    overflow-y: auto;
-    margin: 16px 0;
-    border-radius: 12px;
-    border: 1px solid #eee;
-  }
-
-  .result-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .result-table th {
-    background: #f0f0ff;
-    padding: 10px 6px;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    color: #4a4a8a;
-    font-size: 13px;
-  }
-
-  .result-table td {
-    padding: 8px 6px;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
+  .result-table-wrap { max-height: 400px; overflow-y: auto; margin: 16px 0; border-radius: 12px; border: 1px solid #eee; -webkit-overflow-scrolling: touch; }
+  .result-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; }
+  .result-table th { background: #f0f0ff; padding: 10px 6px; position: sticky; top: 0; z-index: 1; color: #4a4a8a; font-size: 13px; }
+  .result-table td { padding: 8px 6px; border-bottom: 1px solid #f0f0f0; }
   .result-table tr.row-correct { background: #f0fff0; }
   .result-table tr.row-wrong { background: #fff5f5; }
   .result-table tr.row-skip { background: #fffdf0; }
-
-  .badge-correct {
-    display: inline-block;
-    background: #2ecc71;
-    color: white;
-    padding: 2px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-  }
-
-  .badge-wrong {
-    display: inline-block;
-    background: #e74c3c;
-    color: white;
-    padding: 2px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-  }
-
-  .badge-skip {
-    display: inline-block;
-    background: #f39c12;
-    color: white;
-    padding: 2px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-  }
-
+  .badge-correct { display: inline-block; background: #2ecc71; color: white; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+  .badge-wrong { display: inline-block; background: #e74c3c; color: white; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+  .badge-skip { display: inline-block; background: #f39c12; color: white; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
   .redo-btn {
-    padding: 14px 36px;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-    background: linear-gradient(135deg, #e74c3c, #c0392b);
-    border: none;
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
+    padding: 14px 36px; font-size: 18px; font-weight: bold; color: white;
+    background: linear-gradient(135deg, #e74c3c, #c0392b); border: none;
+    border-radius: 16px; cursor: pointer; transition: all 0.2s; margin-top: 8px;
   }
+  .redo-btn:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(231,76,60,0.4); }
 
-  .redo-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 24px rgba(231, 76, 60, 0.4);
-  }
-
-  /* 题目类型选择 */
-  .type-selector {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin: 16px 0;
-  }
-
+  .type-selector { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 16px 0; }
   .type-btn {
-    padding: 8px 16px;
-    border: 2px solid #ddd;
-    border-radius: 20px;
-    background: white;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
+    padding: 8px 16px; border: 2px solid #ddd; border-radius: 20px;
+    background: white; cursor: pointer; font-size: 14px; transition: all 0.2s;
   }
+  .type-btn.active { border-color: #667eea; background: #667eea; color: white; }
+  .type-btn:hover { border-color: #667eea; }
 
-  .type-btn.active {
-    border-color: #667eea;
-    background: #667eea;
-    color: white;
-  }
-
-  .type-btn:hover {
-    border-color: #667eea;
-  }
-
-  /* 反馈动画 */
   .feedback {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 80px;
-    z-index: 100;
-    pointer-events: none;
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 80px; z-index: 100; pointer-events: none;
     animation: feedbackAnim 0.6s ease-out forwards;
   }
-
   @keyframes feedbackAnim {
     0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
     50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
@@ -386,40 +134,41 @@
 <body>
 
 <div class="container">
-  <h1>🧮 Aiden的数学练习</h1>
-  <div class="subtitle">每天练习，越来越棒！</div>
+  <h1>&#129518; Aiden's Math Practice</h1>
+  <div class="subtitle">Practice every day, get better every day!</div>
 
-  <!-- 开始页面 -->
+  <!-- Start Screen -->
   <div id="startScreen" class="start-screen">
     <p>
-      📝 共 <strong>100</strong> 道题<br>
-      ⏱️ 限时 <strong>10</strong> 分钟<br>
-      🎯 每题4个选项，选出正确答案
+      &#128221; <strong>100</strong> questions<br>
+      &#9201;&#65039; <strong>10</strong> minutes<br>
+      &#127919; Pick the correct answer from 4 choices
     </p>
-    <p style="font-size:14px; color:#999;">选择题目类型：</p>
+    <p style="font-size:14px; color:#999;">Choose question types:</p>
     <div class="type-selector">
-      <button class="type-btn active" data-type="add" onclick="toggleType(this)">➕ 加法</button>
-      <button class="type-btn active" data-type="sub" onclick="toggleType(this)">➖ 减法</button>
-      <button class="type-btn active" data-type="mul" onclick="toggleType(this)">✖️ 乘法</button>
-      <button class="type-btn active" data-type="div" onclick="toggleType(this)">➗ 除法</button>
-      <button class="type-btn" data-type="mix" onclick="toggleMix(this)">🔀 Mix</button>
+      <button class="type-btn active" data-type="add" onclick="toggleType(this)">&#10133; Add</button>
+      <button class="type-btn active" data-type="sub" onclick="toggleType(this)">&#10134; Subtract</button>
+      <button class="type-btn active" data-type="mul" onclick="toggleType(this)">&#10006;&#65039; Multiply</button>
+      <button class="type-btn active" data-type="div" onclick="toggleType(this)">&#10135; Divide</button>
+      <button class="type-btn" data-type="mix" onclick="toggleMix(this)">&#128256; Mix</button>
+      <button class="type-btn" data-type="word" onclick="toggleType(this)">&#128218; Word Problems</button>
     </div>
-    <button class="start-btn" onclick="startQuiz()">开始答题！</button>
+    <button class="start-btn" onclick="startQuiz()">Start!</button>
   </div>
 
-  <!-- 答题页面 -->
+  <!-- Quiz Screen -->
   <div id="quizScreen" class="hidden">
     <div class="info-bar">
       <div class="info-item">
-        <div class="info-label">题目</div>
+        <div class="info-label">Question</div>
         <div class="info-value"><span id="currentQ">1</span>/<span id="totalQ">100</span></div>
       </div>
       <div class="info-item">
-        <div class="info-label">剩余时间</div>
+        <div class="info-label">Time Left</div>
         <div class="info-value timer" id="timerDisplay">10:00</div>
       </div>
       <div class="info-item">
-        <div class="info-label">正确</div>
+        <div class="info-label">Correct</div>
         <div class="info-value" id="correctCount" style="color:#2ecc71">0</div>
       </div>
     </div>
@@ -429,7 +178,7 @@
     </div>
 
     <div class="question-area">
-      <div class="question-number" id="questionNumber">第 1 题</div>
+      <div class="question-number" id="questionNumber">Q 1 / 100</div>
       <div class="question-text" id="questionText">12 + 34 = ?</div>
     </div>
 
@@ -441,29 +190,26 @@
     </div>
   </div>
 
-  <!-- 结果页面 -->
+  <!-- Result Screen -->
   <div id="resultScreen" class="hidden result-screen">
   </div>
 </div>
 
 <script>
-  // 状态
   let questions = [];
   let currentIndex = 0;
   let correctTotal = 0;
-  let timeLeft = 600; // 10分钟 = 600秒
+  let timeLeft = 600;
   let timerInterval = null;
   let selectedTypes = ['add', 'sub', 'mul', 'div'];
   let quizActive = false;
-  let answers = []; // 记录每题作答情况: { isCorrect, userAnswer }
+  let answers = [];
   let isRedoMode = false;
   let totalQuestions = 100;
 
-  // 题目类型选择
   function toggleType(btn) {
-    // 如果点了单项，取消Mix的选中
     const mixBtn = document.querySelector('.type-btn[data-type="mix"]');
-    if (mixBtn.classList.contains('active')) {
+    if (mixBtn && mixBtn.classList.contains('active')) {
       mixBtn.classList.remove('active');
     }
     btn.classList.toggle('active');
@@ -473,18 +219,15 @@
     });
   }
 
-  // Mix按钮：选中时自动选中全部四种，取消时全部取消
   function toggleMix(btn) {
-    const allBtns = document.querySelectorAll('.type-btn[data-type="add"], .type-btn[data-type="sub"], .type-btn[data-type="mul"], .type-btn[data-type="div"]');
+    const mathBtns = document.querySelectorAll('.type-btn[data-type="add"], .type-btn[data-type="sub"], .type-btn[data-type="mul"], .type-btn[data-type="div"]');
     const isActive = btn.classList.contains('active');
     if (isActive) {
-      // 取消Mix和所有单项
       btn.classList.remove('active');
-      allBtns.forEach(b => b.classList.remove('active'));
+      mathBtns.forEach(b => b.classList.remove('active'));
     } else {
-      // 选中Mix和所有单项
       btn.classList.add('active');
-      allBtns.forEach(b => b.classList.add('active'));
+      mathBtns.forEach(b => b.classList.add('active'));
     }
     selectedTypes = [];
     document.querySelectorAll('.type-btn.active').forEach(b => {
@@ -492,124 +235,106 @@
     });
   }
 
-  // 生成随机整数 [min, max]
   function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // 生成一道题
+  // Word problem templates for 8-year-old level
+  const wordTemplates = [
+    // Addition
+    (a, b) => ({ text: `${a > b ? a : b} apples and ${a > b ? b : a} oranges are in a basket. How many fruits in total?`, answer: a + b, short: `${Math.max(a,b)} + ${Math.min(a,b)}` }),
+    (a, b) => ({ text: `Emma has ${a} stickers. She gets ${b} more. How many stickers does she have now?`, answer: a + b, short: `${a} + ${b}` }),
+    (a, b) => ({ text: `There are ${a} boys and ${b} girls in a class. How many students in total?`, answer: a + b, short: `${a} + ${b}` }),
+    (a, b) => ({ text: `Aiden scored ${a} points in the first game and ${b} in the second. What is his total score?`, answer: a + b, short: `${a} + ${b}` }),
+    // Subtraction
+    (a, b) => { const big = Math.max(a,b), small = Math.min(a,b); return { text: `You have ${big} candies and eat ${small}. How many are left?`, answer: big - small, short: `${big} - ${small}` }; },
+    (a, b) => { const big = Math.max(a,b), small = Math.min(a,b); return { text: `A shop had ${big} toys. ${small} were sold. How many are left?`, answer: big - small, short: `${big} - ${small}` }; },
+    (a, b) => { const big = Math.max(a,b), small = Math.min(a,b); return { text: `There were ${big} birds on a tree. ${small} flew away. How many are still on the tree?`, answer: big - small, short: `${big} - ${small}` }; },
+    // Multiplication
+    () => { const x = randInt(2,9), y = randInt(2,9); return { text: `Each bag has ${x} marbles. You have ${y} bags. How many marbles in total?`, answer: x * y, short: `${x} x ${y}` }; },
+    () => { const x = randInt(2,9), y = randInt(2,9); return { text: `There are ${y} rows of chairs with ${x} chairs in each row. How many chairs are there?`, answer: x * y, short: `${x} x ${y}` }; },
+    () => { const x = randInt(2,9), y = randInt(2,9); return { text: `${y} friends each bring ${x} cookies. How many cookies are there altogether?`, answer: x * y, short: `${x} x ${y}` }; },
+    // Division
+    () => { const d = randInt(2,9), q = randInt(2,9); return { text: `${d * q} sweets are shared equally among ${d} children. How many does each child get?`, answer: q, short: `${d*q} / ${d}` }; },
+    () => { const d = randInt(2,9), q = randInt(2,9); return { text: `You have ${d * q} stickers and put ${d} on each page. How many pages do you need?`, answer: q, short: `${d*q} / ${d}` }; },
+    () => { const d = randInt(2,9), q = randInt(2,9); return { text: `A baker made ${d * q} muffins and packs ${d} in each box. How many boxes are needed?`, answer: q, short: `${d*q} / ${d}` }; },
+  ];
+
   function generateQuestion() {
     const type = selectedTypes[randInt(0, selectedTypes.length - 1)];
-    let a, b, answer, text;
+    let a, b, answer, text, isWord = false, shortText = '';
 
     switch(type) {
       case 'add':
         a = randInt(10, 90);
-        b = randInt(1, 100 - a); // 确保 a + b <= 100
+        b = randInt(1, 100 - a);
         answer = a + b;
         text = `${a} + ${b} = ?`;
         break;
       case 'sub':
         a = randInt(10, 99);
-        b = randInt(1, a); // 确保不出负数，且 a <= 99 < 100
+        b = randInt(1, a);
         answer = a - b;
-        text = `${a} − ${b} = ?`;
+        text = `${a} \u2212 ${b} = ?`;
         break;
       case 'mul':
         a = randInt(1, 9);
         b = randInt(1, 9);
         answer = a * b;
-        text = `${a} × ${b} = ?`;
+        text = `${a} \u00d7 ${b} = ?`;
         break;
       case 'div':
         b = randInt(1, 9);
         answer = randInt(1, 9);
-        a = b * answer; // 确保整除
-        text = `${a} ÷ ${b} = ?`;
+        a = b * answer;
+        text = `${a} \u00f7 ${b} = ?`;
         break;
       case 'mix': {
-        // 混合运算：两步运算，按运算顺序（先乘除后加减）
         const patterns = [
-          // a + b × c (结果 <= 100)
-          () => {
-            const b2 = randInt(2, 9), c = randInt(2, 9);
-            const product = b2 * c;
-            const maxA = Math.max(1, 100 - product);
-            const a2 = randInt(1, maxA);
-            return { text: `${a2} + ${b2} × ${c} = ?`, answer: a2 + product };
-          },
-          // a - b × c (确保不为负，a <= 100)
-          () => {
-            const b2 = randInt(2, 9), c = randInt(2, 9);
-            const product = b2 * c;
-            const a2 = randInt(product, Math.min(100, product + 50));
-            return { text: `${a2} − ${b2} × ${c} = ?`, answer: a2 - product };
-          },
-          // a × b + c (结果 <= 100)
-          () => {
-            const a2 = randInt(2, 9), b2 = randInt(2, 9);
-            const product = a2 * b2;
-            const maxC = Math.max(1, 100 - product);
-            const c = randInt(1, maxC);
-            return { text: `${a2} × ${b2} + ${c} = ?`, answer: product + c };
-          },
-          // a × b - c (确保不为负)
-          () => {
-            const a2 = randInt(2, 9), b2 = randInt(2, 9);
-            const product = a2 * b2;
-            const c = randInt(1, product);
-            return { text: `${a2} × ${b2} − ${c} = ?`, answer: product - c };
-          },
-          // a ÷ b + c (结果 <= 100)
-          () => {
-            const b2 = randInt(2, 9), quotient = randInt(1, 9);
-            const a2 = b2 * quotient;
-            const maxC = Math.max(1, 100 - quotient);
-            const c = randInt(1, maxC);
-            return { text: `${a2} ÷ ${b2} + ${c} = ?`, answer: quotient + c };
-          },
-          // a + b ÷ c (结果 <= 100)
-          () => {
-            const c = randInt(2, 9), quotient = randInt(1, 9);
-            const b2 = c * quotient;
-            const maxA = Math.max(1, 100 - quotient);
-            const a2 = randInt(1, maxA);
-            return { text: `${a2} + ${b2} ÷ ${c} = ?`, answer: a2 + quotient };
-          }
+          () => { const b2=randInt(2,9),c=randInt(2,9),p=b2*c,a2=randInt(1,Math.max(1,100-p)); return {text:`${a2} + ${b2} \u00d7 ${c} = ?`, answer:a2+p}; },
+          () => { const b2=randInt(2,9),c=randInt(2,9),p=b2*c,a2=randInt(p,Math.min(100,p+50)); return {text:`${a2} \u2212 ${b2} \u00d7 ${c} = ?`, answer:a2-p}; },
+          () => { const a2=randInt(2,9),b2=randInt(2,9),p=a2*b2,c=randInt(1,Math.max(1,100-p)); return {text:`${a2} \u00d7 ${b2} + ${c} = ?`, answer:p+c}; },
+          () => { const a2=randInt(2,9),b2=randInt(2,9),p=a2*b2,c=randInt(1,p); return {text:`${a2} \u00d7 ${b2} \u2212 ${c} = ?`, answer:p-c}; },
+          () => { const b2=randInt(2,9),q=randInt(1,9),a2=b2*q,c=randInt(1,Math.max(1,100-q)); return {text:`${a2} \u00f7 ${b2} + ${c} = ?`, answer:q+c}; },
+          () => { const c=randInt(2,9),q=randInt(1,9),b2=c*q,a2=randInt(1,Math.max(1,100-q)); return {text:`${a2} + ${b2} \u00f7 ${c} = ?`, answer:a2+q}; },
         ];
-        const gen = patterns[randInt(0, patterns.length - 1)]();
+        const gen = patterns[randInt(0, patterns.length-1)]();
         answer = gen.answer;
         text = gen.text;
         break;
       }
-    }
-
-    // 生成4个选项（含正确答案）
-    let options = new Set();
-    options.add(answer);
-
-    while (options.size < 4) {
-      let fake;
-      const offset = randInt(1, 10) * (Math.random() > 0.5 ? 1 : -1);
-      fake = answer + offset;
-      if (fake >= 0 && fake !== answer) {
-        options.add(fake);
+      case 'word': {
+        isWord = true;
+        const addA = randInt(10, 90), addB = randInt(1, 100 - addA);
+        const subA = randInt(10, 99), subB = randInt(1, subA);
+        // Pick a random template
+        const tpl = wordTemplates[randInt(0, wordTemplates.length - 1)];
+        const gen = tpl(addA, addB);
+        answer = gen.answer;
+        text = gen.text;
+        shortText = gen.short;
+        break;
       }
     }
 
-    // 转为数组并打乱
+    // Generate 4 options
+    let options = new Set();
+    options.add(answer);
+    while (options.size < 4) {
+      const offset = randInt(1, 10) * (Math.random() > 0.5 ? 1 : -1);
+      const fake = answer + offset;
+      if (fake >= 0 && fake !== answer) options.add(fake);
+    }
     let optArr = Array.from(options);
     for (let i = optArr.length - 1; i > 0; i--) {
       const j = randInt(0, i);
       [optArr[i], optArr[j]] = [optArr[j], optArr[i]];
     }
-
     const correctIdx = optArr.indexOf(answer);
 
-    return { text, answer, options: optArr, correctIdx };
+    return { text, answer, options: optArr, correctIdx, isWord, shortText: shortText || text.replace(' = ?', '') };
   }
 
-  // 生成所有题目
   function generateAllQuestions() {
     questions = [];
     for (let i = 0; i < 100; i++) {
@@ -617,13 +342,18 @@
     }
   }
 
-  // 显示当前题目
   function showQuestion() {
     const q = questions[currentIndex];
     document.getElementById('currentQ').textContent = currentIndex + 1;
     document.getElementById('totalQ').textContent = totalQuestions;
-    document.getElementById('questionNumber').textContent = `第 ${currentIndex + 1} / ${totalQuestions} 题`;
-    document.getElementById('questionText').textContent = q.text;
+    document.getElementById('questionNumber').textContent = `Q ${currentIndex + 1} / ${totalQuestions}`;
+    const qText = document.getElementById('questionText');
+    qText.textContent = q.text;
+    if (q.isWord) {
+      qText.classList.add('word-problem');
+    } else {
+      qText.classList.remove('word-problem');
+    }
     document.getElementById('progressFill').style.width = `${(currentIndex / totalQuestions) * 100}%`;
 
     const btns = document.querySelectorAll('.option-btn');
@@ -633,45 +363,33 @@
     });
   }
 
-  // 选择答案
   function selectAnswer(idx) {
     if (!quizActive) return;
-
     const q = questions[currentIndex];
     const btns = document.querySelectorAll('.option-btn');
-
-    // 禁用所有按钮
     btns.forEach(b => b.classList.add('disabled'));
 
     const isCorrect = (idx === q.correctIdx);
-    answers[currentIndex] = {
-      isCorrect,
-      userAnswer: q.options[idx]
-    };
+    answers[currentIndex] = { isCorrect, userAnswer: q.options[idx] };
 
     if (isCorrect) {
       btns[idx].classList.add('correct');
       correctTotal++;
       document.getElementById('correctCount').textContent = correctTotal;
-      showFeedback('✅');
+      showFeedback('\u2705');
     } else {
       btns[idx].classList.add('wrong');
       btns[q.correctIdx].classList.add('show-correct');
-      showFeedback('❌');
+      showFeedback('\u274c');
     }
 
-    // 延迟后进入下一题
     setTimeout(() => {
       currentIndex++;
-      if (currentIndex >= totalQuestions) {
-        endQuiz();
-      } else {
-        showQuestion();
-      }
+      if (currentIndex >= totalQuestions) { endQuiz(); }
+      else { showQuestion(); }
     }, 500);
   }
 
-  // 反馈动画
   function showFeedback(emoji) {
     const el = document.createElement('div');
     el.className = 'feedback';
@@ -680,7 +398,6 @@
     setTimeout(() => el.remove(), 700);
   }
 
-  // 计时器
   function startTimer() {
     timerInterval = setInterval(() => {
       timeLeft--;
@@ -688,24 +405,16 @@
       const sec = timeLeft % 60;
       const display = document.getElementById('timerDisplay');
       display.textContent = `${min}:${sec.toString().padStart(2, '0')}`;
-
-      if (timeLeft <= 60) {
-        display.classList.add('warning');
-      }
-
-      if (timeLeft <= 0) {
-        endQuiz();
-      }
+      if (timeLeft <= 60) display.classList.add('warning');
+      if (timeLeft <= 0) endQuiz();
     }, 1000);
   }
 
-  // 开始测验
   function startQuiz() {
     if (selectedTypes.length === 0) {
-      alert('请至少选择一种题目类型！');
+      alert('Please select at least one question type!');
       return;
     }
-
     currentIndex = 0;
     correctTotal = 0;
     timeLeft = 600;
@@ -729,12 +438,10 @@
     startTimer();
   }
 
-  // 重做错题
   function redoWrongQuestions() {
     const wrongQuestions = [];
     for (let i = 0; i < questions.length; i++) {
       if (!answers[i] || !answers[i].isCorrect) {
-        // 重新生成选项，但保留题目
         const q = questions[i];
         let options = new Set();
         options.add(q.answer);
@@ -749,10 +456,8 @@
           [optArr[j], optArr[k]] = [optArr[k], optArr[j]];
         }
         wrongQuestions.push({
-          text: q.text,
-          answer: q.answer,
-          options: optArr,
-          correctIdx: optArr.indexOf(q.answer)
+          text: q.text, answer: q.answer, options: optArr,
+          correctIdx: optArr.indexOf(q.answer), isWord: q.isWord, shortText: q.shortText
         });
       }
     }
@@ -778,7 +483,6 @@
     startTimer();
   }
 
-  // 结束测验
   function endQuiz() {
     quizActive = false;
     clearInterval(timerInterval);
@@ -789,60 +493,33 @@
     const min = Math.floor(timeTaken / 60);
     const sec = timeTaken % 60;
 
-    // 统计错题数
-    let wrongCount = 0;
-    let skipCount = 0;
+    let wrongCount = 0, skipCount = 0;
     for (let i = 0; i < totalQuestions; i++) {
       if (!answers[i]) skipCount++;
       else if (!answers[i].isCorrect) wrongCount++;
     }
 
     let grade, emoji, message, circleClass;
-    if (score >= 95) {
-      grade = '太棒了！'; emoji = '🏆'; message = '你是数学小天才！继续保持！'; circleClass = 'excellent';
-    } else if (score >= 80) {
-      grade = '很不错！'; emoji = '⭐'; message = '表现很好，再接再厉！'; circleClass = 'good';
-    } else if (score >= 60) {
-      grade = '还可以！'; emoji = '💪'; message = '继续加油，你会越来越好的！'; circleClass = 'ok';
-    } else {
-      grade = '要努力哦'; emoji = '📚'; message = '多多练习，下次一定更好！'; circleClass = 'poor';
-    }
+    if (score >= 95) { grade = 'Amazing!'; emoji = '\ud83c\udfc6'; message = "You're a math genius! Keep it up!"; circleClass = 'excellent'; }
+    else if (score >= 80) { grade = 'Great job!'; emoji = '\u2b50'; message = 'Well done! Keep going!'; circleClass = 'good'; }
+    else if (score >= 60) { grade = 'Not bad!'; emoji = '\ud83d\udcaa'; message = "Keep practising, you'll get better!"; circleClass = 'ok'; }
+    else { grade = 'Keep trying!'; emoji = '\ud83d\udcda'; message = 'More practice makes perfect!'; circleClass = 'poor'; }
 
-    // 生成表格行
     let tableRows = '';
     for (let i = 0; i < totalQuestions; i++) {
       const q = questions[i];
-      const questionText = q.text.replace(' = ?', '');
+      const qDisplay = q.shortText || q.text.replace(' = ?', '');
       if (!answers[i]) {
-        // 未答（时间到）
-        tableRows += `<tr class="row-skip">
-          <td>${i + 1}</td>
-          <td>${questionText}</td>
-          <td>—</td>
-          <td>${q.answer}</td>
-          <td><span class="badge-skip">未答</span></td>
-        </tr>`;
+        tableRows += `<tr class="row-skip"><td>${i+1}</td><td style="text-align:left">${qDisplay}</td><td>\u2014</td><td>${q.answer}</td><td><span class="badge-skip">Skipped</span></td></tr>`;
       } else if (answers[i].isCorrect) {
-        tableRows += `<tr class="row-correct">
-          <td>${i + 1}</td>
-          <td>${questionText}</td>
-          <td>${answers[i].userAnswer}</td>
-          <td>${q.answer}</td>
-          <td><span class="badge-correct">正确</span></td>
-        </tr>`;
+        tableRows += `<tr class="row-correct"><td>${i+1}</td><td style="text-align:left">${qDisplay}</td><td>${answers[i].userAnswer}</td><td>${q.answer}</td><td><span class="badge-correct">Correct</span></td></tr>`;
       } else {
-        tableRows += `<tr class="row-wrong">
-          <td>${i + 1}</td>
-          <td>${questionText}</td>
-          <td style="color:#e74c3c;font-weight:bold">${answers[i].userAnswer}</td>
-          <td style="color:#27ae60;font-weight:bold">${q.answer}</td>
-          <td><span class="badge-wrong">错误</span></td>
-        </tr>`;
+        tableRows += `<tr class="row-wrong"><td>${i+1}</td><td style="text-align:left">${qDisplay}</td><td style="color:#e74c3c;font-weight:bold">${answers[i].userAnswer}</td><td style="color:#27ae60;font-weight:bold">${q.answer}</td><td><span class="badge-wrong">Wrong</span></td></tr>`;
       }
     }
 
     const hasWrong = (wrongCount + skipCount) > 0;
-    const redoLabel = isRedoMode ? '继续重做错题' : '重做错题';
+    const redoLabel = isRedoMode ? 'Redo Wrong Again' : 'Redo Wrong Questions';
 
     document.getElementById('quizScreen').classList.add('hidden');
     const resultDiv = document.getElementById('resultScreen');
@@ -851,44 +528,25 @@
     resultDiv.innerHTML = `
       <div class="emoji-big">${emoji}</div>
       <div class="score-circle ${circleClass}">
-        ${score}<span style="font-size:20px">分</span>
-        <div class="score-label">正确率</div>
+        ${score}<span style="font-size:20px">%</span>
+        <div class="score-label">Accuracy</div>
       </div>
       <div class="result-message">${grade} ${message}</div>
       <div class="result-details">
-        <div class="result-detail">
-          <div class="label">已答题数</div>
-          <div class="value">${answered}</div>
-        </div>
-        <div class="result-detail">
-          <div class="label">答对</div>
-          <div class="value" style="color:#2ecc71">${correctTotal}</div>
-        </div>
-        <div class="result-detail">
-          <div class="label">用时</div>
-          <div class="value">${min}分${sec}秒</div>
-        </div>
+        <div class="result-detail"><div class="label">Answered</div><div class="value">${answered}</div></div>
+        <div class="result-detail"><div class="label">Correct</div><div class="value" style="color:#2ecc71">${correctTotal}</div></div>
+        <div class="result-detail"><div class="label">Time</div><div class="value">${min}m ${sec}s</div></div>
       </div>
-
       <div class="result-table-wrap">
         <table class="result-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>题目</th>
-              <th>你的答案</th>
-              <th>正确答案</th>
-              <th>结果</th>
-            </tr>
-          </thead>
+          <thead><tr><th>#</th><th style="text-align:left">Question</th><th>Yours</th><th>Answer</th><th>Result</th></tr></thead>
           <tbody>${tableRows}</tbody>
         </table>
       </div>
-
-      ${hasWrong ? `<button class="redo-btn" onclick="redoWrongQuestions()">📝 ${redoLabel}（${wrongCount + skipCount}题）</button><br>` : '<p style="color:#2ecc71;font-weight:bold;margin:12px 0">全部正确！太厉害了！</p>'}
-      <button class="restart-btn" onclick="startQuiz()" style="margin-top:12px">重新开始100题</button>
+      ${hasWrong ? `<button class="redo-btn" onclick="redoWrongQuestions()">\ud83d\udcdd ${redoLabel} (${wrongCount + skipCount})</button><br>` : '<p style="color:#2ecc71;font-weight:bold;margin:12px 0">All correct! You\'re awesome!</p>'}
+      <button class="restart-btn" onclick="startQuiz()" style="margin-top:12px">New 100 Questions</button>
       <br>
-      <button class="restart-btn" onclick="goHome()" style="background: linear-gradient(135deg, #aaa, #888); font-size: 16px; padding: 12px 32px; margin-top:8px">返回首页</button>
+      <button class="restart-btn" onclick="goHome()" style="background:linear-gradient(135deg,#aaa,#888);font-size:16px;padding:12px 32px;margin-top:8px">Back to Home</button>
     `;
   }
 
